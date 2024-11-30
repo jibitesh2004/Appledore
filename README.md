@@ -7,6 +7,7 @@ A simple and efficient graph library in modern C++ Supports directed/undirected 
 - Supports custom vertex and edge types
 - Efficient management of vertices and edges
 - Easy querying of graph structure and properties
+- Upcoming features: support for graph degrees, advanced graph algorithms (e.g., Dijkstra, BFS, DFS), and additional utilities for graph analysis.
 
 ## Installation
 1. Clone the repository
