@@ -13,18 +13,18 @@ namespace Appledore
     {
     public:
         void addVertex(const VertexType &vertex);
-        void addEdge(const VertexType &src, const VertexType &dest, const EdgeType &edgeValue, bool isDirected = false);
-        void display() const;
-        std::vector<VertexType> getVertices() const;
+        void addEdge(const VertexType &src, const VertexType &dest, std::optional<EdgeType> edgeValue, bool isDirected = false);
+        void addEdge(const VertexType &src, const VertexType &dest, bool isDirected);
+        const std::vector<VertexType> &getVertices() const;
         bool hasEdge(const VertexType &src, const VertexType &dest) const;
         EdgeType getEdgeValue(const VertexType &src, const VertexType &dest) const;
 
         GraphMatrix() : vertexToIndex(), indexToVertex(), adjacencyMatrix() {}
 
     private:
-        std::map<VertexType, size_t> vertexToIndex; // Maps vertex to its index
-        std::vector<VertexType> indexToVertex;     // Maps index to vertex
-        std::vector<std::vector<std::optional<EdgeType>>> adjacencyMatrix; // Adjacency matrix
+        std::map<VertexType, size_t> vertexToIndex;                        
+        std::vector<VertexType> indexToVertex;                             
+        std::vector<std::vector<std::optional<EdgeType>>> adjacencyMatrix; 
     };
 
     template <typename VertexType, typename EdgeType>
@@ -33,14 +33,13 @@ namespace Appledore
         if (vertexToIndex.count(vertex))
         {
             std::cout << "Vertex already exists\n";
-            return; // Vertex already exists
+            return; 
         }
 
         size_t newIndex = indexToVertex.size();
         vertexToIndex[vertex] = newIndex;
         indexToVertex.push_back(vertex);
 
-        // Expand the adjacency matrix
         for (auto &row : adjacencyMatrix)
         {
             row.push_back(std::nullopt);
@@ -49,7 +48,9 @@ namespace Appledore
     }
 
     template <typename VertexType, typename EdgeType>
-    void GraphMatrix<VertexType, EdgeType>::addEdge(const VertexType &src, const VertexType &dest, const EdgeType &edgeValue, bool isDirected)
+    void GraphMatrix<VertexType, EdgeType>::addEdge(const VertexType &src, const VertexType &dest,
+                                                    std::optional<EdgeType> edgeValue,
+                                                    bool isDirected)
     {
         if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
         {
@@ -59,46 +60,24 @@ namespace Appledore
         size_t srcIndex = vertexToIndex[src];
         size_t destIndex = vertexToIndex[dest];
 
-        adjacencyMatrix[srcIndex][destIndex] = edgeValue;
+        adjacencyMatrix[srcIndex][destIndex] = edgeValue.value_or(EdgeType());
 
         if (!isDirected)
         {
-            adjacencyMatrix[destIndex][srcIndex] = edgeValue;
+            adjacencyMatrix[destIndex][srcIndex] = edgeValue.value_or(EdgeType());
         }
     }
 
-    // template <typename VertexType, typename EdgeType>
-    // void GraphMatrix<VertexType, EdgeType>::display() const
-    // {
-    //     std::cout << "  ";
-    //     for (const auto &vertex : indexToVertex)
-    //     {
-    //         std::cout << vertex << " ";
-    //     }
-    //     std::cout << "\n";
-
-    //     for (size_t i = 0; i < adjacencyMatrix.size(); ++i)
-    //     {
-    //         std::cout << indexToVertex[i] << " ";
-    //         for (const auto &edge : adjacencyMatrix[i])
-    //         {
-    //             if (edge.has_value())
-    //             {
-    //                 std::cout << edge.value() << " ";
-    //             }
-    //             else
-    //             {
-    //                 std::cout << "0 ";
-    //             }
-    //         }
-    //         std::cout << "\n";
-    //     }
-    // }
+    template <typename VertexType, typename EdgeType>
+    void GraphMatrix<VertexType, EdgeType>::addEdge(const VertexType &src, const VertexType &dest, bool isDirected)
+    {
+        addEdge(src, dest, std::nullopt, isDirected);
+    }
 
     template <typename VertexType, typename EdgeType>
-    std::vector<VertexType> GraphMatrix<VertexType, EdgeType>::getVertices() const
+    const std::vector<VertexType> &GraphMatrix<VertexType, EdgeType>::getVertices() const
     {
-        return indexToVertex;
+        return indexToVertex; //just returns a const reference to the vector.
     }
 
     template <typename VertexType, typename EdgeType>
