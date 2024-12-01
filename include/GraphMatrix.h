@@ -20,6 +20,8 @@ namespace Appledore
         EdgeType getEdgeValue(const VertexType &src, const VertexType &dest) const;
         std::vector<EdgeType> getEdges() const;
         GraphMatrix() : vertexToIndex(), indexToVertex(), adjacencyMatrix() {};
+        void removeEdge(const VertexType &src, const VertexType &dest);
+        void updateEdge(const VertexType &, const VertexType &, const EdgeType &);
 
     private:
         std::map<VertexType, size_t> vertexToIndex;
@@ -27,6 +29,43 @@ namespace Appledore
         std::vector<std::vector<std::optional<EdgeType>>> adjacencyMatrix;
         bool weighted;
     };
+
+    template <typename VertexType, typename EdgeType>
+    void GraphMatrix<VertexType, EdgeType>::removeEdge(const VertexType &src, const VertexType &dest)
+    {
+        if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
+        {
+            throw std::invalid_argument("One or both vertices do not exist");
+        }
+
+        size_t si = vertexToIndex[src];
+        size_t di = vertexToIndex[dest];
+
+        adjacencyMatrix[si][di] = std::nullopt;
+
+        if (adjacencyMatrix[di][si] != std::nullopt)
+        {
+            adjacencyMatrix[di][si] = std::nullopt;
+        }
+    }
+
+    template <typename VertexType, typename EdgeType>
+    void GraphMatrix<VertexType, EdgeType>::updateEdge(const VertexType &src,
+                                                       const VertexType &dest,
+                                                       const EdgeType &newVal)
+    {
+        if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
+        {
+            throw std::invalid_argument("One or both vertices do not exist");
+        }
+        size_t si = vertexToIndex[src];
+        size_t di = vertexToIndex[dest];
+
+        if(!adjacencyMatrix[src][di].has_value()){
+            throw std::invalid_argument("Edge does not exist between specified vertices.");
+        }
+        adjacencyMatrix[si][di] = newVal;
+    }
 
     template <typename VertexType, typename EdgeType>
     void GraphMatrix<VertexType, EdgeType>::addVertex(const VertexType &vertex)
@@ -133,7 +172,6 @@ namespace Appledore
                 }
             }
         }
-
         return edges;
     }
 
