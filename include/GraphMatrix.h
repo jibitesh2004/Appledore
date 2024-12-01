@@ -18,13 +18,14 @@ namespace Appledore
         const std::vector<VertexType> &getVertices() const;
         bool hasEdge(const VertexType &src, const VertexType &dest) const;
         EdgeType getEdgeValue(const VertexType &src, const VertexType &dest) const;
-
-        GraphMatrix() : vertexToIndex(), indexToVertex(), adjacencyMatrix() {}
+        std::vector<EdgeType> getEdges() const;
+        GraphMatrix() : vertexToIndex(), indexToVertex(), adjacencyMatrix() {};
 
     private:
-        std::map<VertexType, size_t> vertexToIndex;                        
-        std::vector<VertexType> indexToVertex;                             
-        std::vector<std::vector<std::optional<EdgeType>>> adjacencyMatrix; 
+        std::map<VertexType, size_t> vertexToIndex;
+        std::vector<VertexType> indexToVertex;
+        std::vector<std::vector<std::optional<EdgeType>>> adjacencyMatrix;
+        bool weighted;
     };
 
     template <typename VertexType, typename EdgeType>
@@ -33,7 +34,7 @@ namespace Appledore
         if (vertexToIndex.count(vertex))
         {
             std::cout << "Vertex already exists\n";
-            return; 
+            return;
         }
 
         size_t newIndex = indexToVertex.size();
@@ -77,7 +78,7 @@ namespace Appledore
     template <typename VertexType, typename EdgeType>
     const std::vector<VertexType> &GraphMatrix<VertexType, EdgeType>::getVertices() const
     {
-        return indexToVertex; //just returns a const reference to the vector.
+        return indexToVertex; // just returns a const reference to the vector.
     }
 
     template <typename VertexType, typename EdgeType>
@@ -112,4 +113,28 @@ namespace Appledore
 
         return adjacencyMatrix[srcIndex][destIndex].value();
     }
+    template <typename VertexType, typename EdgeType>
+    std::vector<EdgeType> GraphMatrix<VertexType, EdgeType>::getEdges() const
+    {
+        std::vector<EdgeType> edges;
+
+        size_t n = adjacencyMatrix.size();
+        for (size_t i = 0; i < n; ++i)
+        {
+            for (size_t j = i; j < n; ++j)
+            {
+                if (adjacencyMatrix[i][j].has_value())
+                {
+                    edges.push_back(adjacencyMatrix[i][j].value());
+                }
+                else if (adjacencyMatrix[j][i].has_value())
+                {
+                    edges.push_back(adjacencyMatrix[j][i].value());
+                }
+            }
+        }
+
+        return edges;
+    }
+
 }
