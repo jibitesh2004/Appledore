@@ -35,18 +35,19 @@ namespace Appledore
         void addEdge(const VertexType &src, const VertexType &dest, const EdgeType &edge);
         void addEdge(const VertexType &src, const VertexType &dest, const EdgeType &edge, bool isDirected);
 
-        const EdgeType &operator()(VertexType src, VertexType dest)
+        const bool operator()(VertexType src, VertexType dest) const
         {
+            if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
+            {
+                return false;
+            }
+
             size_t srcIndex = vertexToIndex.at(src);
             size_t destIndex = vertexToIndex.at(dest);
 
             size_t index = getIndex(srcIndex, destIndex);
 
-            if (!adjacencyMatrix[index].has_value())
-            {
-                throw std::runtime_error("Edge does not exist");
-            }
-            return adjacencyMatrix[index]->value;
+            return adjacencyMatrix[index].has_value();
         }
 
     private:

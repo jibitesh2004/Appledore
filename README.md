@@ -18,78 +18,87 @@ A simple and efficient graph library in modern C++ Supports directed/undirected 
 
 ## Example usage
 Below is an example of how to use the library with custom vertex and edge types.
+
+## Example Diagram
+Code below implements this Graph relationship between USA States and transport medium.
+
+
 ## Custom Structures
 ```cpp
-#include "GraphMatrix.h"
 #include <iostream>
 #include <string>
+#include "./include/GraphMatrix.h"
 
-// Custom structure for vertex
-struct City
+// Vertex class representing a state in the USA
+class State
 {
-    std::string name;
+public:
+    std::string stateName;
+    std::string capitalCity;
+    int population;
 
-    City(std::string n) : name(n) {}
+    State(const std::string &name, const std::string &capital, int pop)
+        : stateName(name), capitalCity(capital), population(pop) {}
 
-    bool operator==(const City &other) const {
-        return name == other.name;
-    }
-
-    friend std::ostream &operator<<(std::ostream &os, const City &city) {
-        os << city.name;
-        return os;
+    bool operator<(const State &other) const
+    {
+        return stateName < other.stateName;
     }
 };
 
-// Custom structure for edge value
-struct Road
+class Connection
 {
-    int distance; // in kilometers
+public:
+    int distance;
+    std::string transportMode;
 
-    Road(int dist) : distance(dist) {}
-
-    friend std::ostream &operator<<(std::ostream &os, const Road &road) {
-        os << road.distance << " km";
-        return os;
-    }
+    Connection(){}
+    Connection(int dist, const std::string &mode)
+        : distance(dist), transportMode(mode) {}
 };
 
 int main()
 {
-    Appledore::GraphMatrix<City, Road> cityGraph;
+    Appledore::GraphMatrix<State, Connection> americaNetwork;
 
-    City city1("New York");
-    City city2("Los Angeles");
-    City city3("Chicago");
-    cityGraph.addVertex(city1);
-    cityGraph.addVertex(city2);
-    cityGraph.addVertex(city3);
+    // American States
+    State california("California", "Sacramento", 39538223);
+    State texas("Texas", "Austin", 29145505);
+    State florida("Florida", "Tallahassee", 21538187);
+    State newYork("New York", "Albany", 20201249);
 
-    cityGraph.addEdge(city1, city2, Road(450), false); 
-    cityGraph.addEdge(city2, city3, Road(200), true);  
+    americaNetwork.addVertex(california);
+    americaNetwork.addVertex(texas);
+    americaNetwork.addVertex(florida);
+    americaNetwork.addVertex(newYork);
 
-    for (const auto &vertex : cityGraph.getVertices()) {
-        std::cout << "City: " << vertex << std::endl;
-    }
-
-    if (cityGraph.hasEdge(city1, city2)) {
-        std::cout << "Road from " << city1 << " to " << city2 << " is " 
-                  << cityGraph.getEdgeValue(city1, city2) << std::endl;
-    }
-
-    if (cityGraph.hasEdge(city2, city3)) {
-        std::cout << "Road from " << city2 << " to " << city3 << " is " 
-                  << cityGraph.getEdgeValue(city2, city3) << std::endl;
+    Connection roadConnection(1500, "Road");   // Distance: 1500 miles, Mode: Road
+    Connection trainConnection(1300, "Train"); // Distance: 1300 miles, Mode: Train
+    Connection airConnection(1000, "Air");     // Distance: 1000 miles, Mode: Air
+    Connection waterConnection(400, "Water");  // Distance: 400 miles,  Mode: Water
+    // Add edges (connections) between states
+    americaNetwork.addEdge(california, texas, roadConnection, false);   // California <-> Texas (Road)
+    americaNetwork.addEdge(florida, newYork, trainConnection, false);  // Florida <-> New York (Train)
+    americaNetwork.addEdge(texas, florida, airConnection, true);       // Texas <-> Florida (Air)
+    americaNetwork.addEdge(california, florida, waterConnection, true); // California -> Florida (water)
+    // Print details of the states and connections
+    std::cout << "American States and Connections:" << std::endl;
+    std::vector<State> states = americaNetwork.getVertices();
+    for (const State &st : states)
+    {
+        for (const State &st2 : states)
+        {
+            if (americaNetwork(st, st2))
+            {
+                Connection edgeValue = americaNetwork.getEdgeValue(st, st2);
+                std::cout << "Edge Connection between " << st.stateName << " and " << st2.stateName << "\n";
+                std::cout << "Distance: " << edgeValue.distance << "\n";
+                std::cout << "Transport: " << edgeValue.transportMode << "\n";
+            }
+        }
     }
 
     return 0;
 }
-```
-Output
-```
-City: New York
-City: Los Angeles
-City: Chicago
-Road from New York to Los Angeles is 450 km
-Road from Los Angeles to Chicago is 200 km
+
 ```
