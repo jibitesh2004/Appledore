@@ -18,6 +18,7 @@ A simple and efficient graph library in modern C++ Supports directed/undirected 
 
 ## Example usage
 Below is an example of how to use the library with custom vertex and edge types.
+![Screenshot_20241205_124620-1](https://github.com/user-attachments/assets/1db263c6-1538-4b14-8b33-725bb68ebc06)
 
 ## Example Diagram
 Code below implements this Graph relationship between USA States and transport medium.
