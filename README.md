@@ -99,3 +99,5 @@ int main()
 }
 
 ```
+# Contributions
+If you'd like to contribute anything, any new feature, work on required features or submit a bug fix make sure to read the [contributing](https://github.com/SharonIV0x86/Appledore/blob/main/CONTRIBUTING.md)
