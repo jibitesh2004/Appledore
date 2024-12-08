@@ -41,12 +41,9 @@ namespace Appledore
             {
                 return false;
             }
-
             size_t srcIndex = vertexToIndex.at(src);
             size_t destIndex = vertexToIndex.at(dest);
-
             size_t index = getIndex(srcIndex, destIndex);
-
             return adjacencyMatrix[index].has_value();
         }
 
@@ -218,19 +215,21 @@ namespace Appledore
         {
             for (size_t dest = 0; dest < numVertices; ++dest)
             {
-                size_t index = getIndex(src, dest);
+                size_t index = src * numVertices + dest; 
 
-                if (adjacencyMatrix[index].has_value() && adjacencyMatrix[index]->isDirected)
+                if (adjacencyMatrix[index].has_value())
                 {
-                    edges.push_back(adjacencyMatrix[index]->value);
-                }
-                else if (adjacencyMatrix[index].has_value() && src <= dest) // For undirected, avoid duplicates
-                {
-                    edges.push_back(adjacencyMatrix[index]->value);
+                    if (adjacencyMatrix[index]->isDirected)
+                    {
+                        edges.push_back(adjacencyMatrix[index]->value);
+                    }
+                    else if (src <= dest)
+                    {
+                        edges.push_back(adjacencyMatrix[index]->value);
+                    }
                 }
             }
         }
-
         return edges;
     }
 
