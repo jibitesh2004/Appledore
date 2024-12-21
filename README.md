@@ -12,7 +12,7 @@ A simple and efficient graph library in modern C++ Supports directed/undirected 
 ## Installation
 1. Clone the repository
 ```
- git clone https://github.com/yourusername/appledore.git
+ git clone https://github.com/SharonIV0X86/Appledore
 ```
 2. Include the ``GraphMatrix`` header in your project
 
