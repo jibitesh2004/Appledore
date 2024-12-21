@@ -1,12 +1,12 @@
 #include <iostream>
-#include "../include/GraphMatrix.h"
+#include "../include/MixedGraph.h"
 
 int main()
 {
     using namespace Appledore;
 
     // Create a graph with string vertices and integer edge weights
-    GraphMatrix<std::string, int> graph;
+    MixedGraphMatrix<std::string, int> graph;
 
     // Add vertices to the graph
     graph.addVertex("A");

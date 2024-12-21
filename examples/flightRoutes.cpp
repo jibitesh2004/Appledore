@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "../include/GraphMatrix.h"
+#include "../include/MixedGraph.h"
 
 // Custom edge type for flight details
 class FlightRoute
@@ -26,7 +26,7 @@ public:
 int main()
 {
     // Create a graph to represent flight routes
-    Appledore::GraphMatrix<std::string, FlightRoute> flightGraph;
+    Appledore::MixedGraphMatrix<std::string, FlightRoute> flightGraph;
 
     // Add cities as vertices
     flightGraph.addVertex("New York");
