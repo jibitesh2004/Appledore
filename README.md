@@ -25,7 +25,7 @@ Find more examples [here](https://github.com/SharonIV0x86/Appledore/tree/main/ex
 ```cpp
 #include <iostream>
 #include <string>
-#include "./include/GraphMatrix.h"
+#include "./include/MixedGraphMatrix.h"
 
 // Vertex class representing a state in the USA
 class State
@@ -57,7 +57,7 @@ public:
 
 int main()
 {
-    Appledore::GraphMatrix<State, Connection> americaNetwork;
+    Appledore::MixedGraphMatrix<State, Connection> americaNetwork;
 
     // American States
     State california("California", "Sacramento", 39538223);
