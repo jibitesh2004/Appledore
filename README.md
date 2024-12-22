@@ -18,7 +18,7 @@ A simple and efficient graph library in modern C++ Supports directed/undirected 
 ## Example Diragram 1
 Code below implements the Graph relationship between Airports and Distances
 ![graph3](https://github.com/user-attachments/assets/8044b80a-c43a-4b92-856d-737ad4b9af20)
-[directedGraph.cpp]("https://github.com/SharonIV0x86/Appledore/blob/main/examples/directedGraph.cpp")
+[directedGraph]("https://github.com/SharonIV0x86/Appledore/blob/main/examples/directedGraph.cpp")
 ## Directed Weighted graph using Custom Structures/Classes
 ```cpp
 #include <iostream>
