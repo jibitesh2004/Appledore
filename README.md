@@ -16,8 +16,8 @@ A simple and efficient graph library in modern C++ Supports directed/undirected 
 ```
 2. Include the ``GraphMatrix`` header in your project
 ## Example Diragram 1
-Code below implements the Graph relationship between Airports and Distances
-[directedgraph]("https://github.com/SharonIV0x86/Appledore/blob/main/examples/directedGraph.cpp")
+Code below implements the Graph relationship between Airports and Distances.
+[Directed Graph Example](https://github.com/SharonIV0x86/Appledore/blob/main/examples/directedGraph.cpp)
 ![graph3](https://github.com/user-attachments/assets/8044b80a-c43a-4b92-856d-737ad4b9af20)
 ## Directed Weighted graph using Custom Structures/Classes
 ```cpp
@@ -118,8 +118,8 @@ int main()
 ```
 ## Example Diagram 2
 Code below implements the Graph relationship between Airports and Distances.
+[Undirected Graph Example](https://github.com/SharonIV0x86/Appledore/blob/main/examples/undirectedGraph.cpp)
 ![graph2](https://github.com/user-attachments/assets/ff6a64d1-47fe-4589-a4bd-2f6a1a15de2c)
-[undirectedGraph.cpp]("https://github.com/SharonIV0x86/Appledore/blob/main/examples/undirectedGraph.cpp")
 ## Undirected Weighted graph using Custom Structures/Classes
 ```cpp
 #include <iostream>
@@ -235,8 +235,8 @@ int main()
 
 ## Example Diagram 3
 Code below implements this Graph relationship between USA States and transport medium.
+[Flight Routes Example](https://github.com/SharonIV0x86/Appledore/blob/main/examples/flightRoutes.cpp)
 ![Screenshot_20241205_124620-1](https://github.com/user-attachments/assets/1db263c6-1538-4b14-8b33-725bb68ebc06)
-[flightRoutes.cpp]("https://github.com/SharonIV0x86/Appledore/blob/main/examples/flightRoutes.cpp")
 ## MixedGraph Example using Custom Structures/Classes
 Below is an example of how to use the library with custom vertex and edge types.
 
