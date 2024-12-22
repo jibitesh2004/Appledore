@@ -17,7 +17,7 @@ A simple and efficient graph library in modern C++ Supports directed/undirected 
 2. Include the ``GraphMatrix`` header in your project
 ## Example Diragram 1
 Code below implements the Graph relationship between Airports and Distances
-
+![graph3](https://github.com/user-attachments/assets/8044b80a-c43a-4b92-856d-737ad4b9af20)
 
 ## Directed Weighted graph using Custom Structures/Classes
 ```cpp
@@ -118,6 +118,7 @@ int main()
 ```
 ## Example Diagram 2
 Code below implements the Graph relationship between Airports and Distances.
+![graph2](https://github.com/user-attachments/assets/ff6a64d1-47fe-4589-a4bd-2f6a1a15de2c)
 
 ## Undirected Weighted graph using Custom Structures/Classes
 ```cpp
