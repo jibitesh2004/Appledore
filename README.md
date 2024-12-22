@@ -15,17 +15,233 @@ A simple and efficient graph library in modern C++ Supports directed/undirected 
  git clone https://github.com/SharonIV0X86/Appledore
 ```
 2. Include the ``GraphMatrix`` header in your project
+## Example Diragram 1
+Code below implements the Graph relationship between Airports and Distances
 
-## Example Diagram
+
+## Directed Weighted graph using Custom Structures/Classes
+```cpp
+#include <iostream>
+#include "../include/GraphMatrix.h"
+
+using namespace Appledore;
+
+class Airport : public GraphVertex
+{
+public:
+    std::string name;
+
+    Airport(std::string name) : name(name) {};
+
+    friend std::ostream &operator<<(std::ostream &os, const Airport &airport)
+    {
+        os << airport.name;
+        return os;
+    }
+};
+
+class Flight
+{
+public:
+    int distance;
+    Flight(int dis) : distance(dis) {};
+
+    friend std::ostream &operator<<(std::ostream &os, const Flight &flight)
+    {
+        os << flight.distance << " miles";
+        return os;
+    }
+};
+
+int main()
+{
+    GraphMatrix<Airport, Flight, DirectedG> AirportsGraph;
+
+    // Define airports
+    Airport LAX("Los Angeles Intl.");
+    Airport JFK("John F. Kennedy");
+    Airport DEN("Denver Intl.");
+    Airport ATL("Atlanta Intl.");
+
+    // Define flights
+    Flight flight1(761);
+    Flight flight2(1945);
+    Flight flight3(1199);
+    Flight flight4(1631);
+    Flight flight5(2475);
+
+    // Add vertices (airports)
+    AirportsGraph.addVertex(LAX, JFK, DEN, ATL);
+
+    // Add edges (flights)
+    AirportsGraph.addEdge(LAX, ATL, flight2);
+    AirportsGraph.addEdge(LAX, JFK, flight5);
+    AirportsGraph.addEdge(JFK, ATL, flight1);
+    AirportsGraph.addEdge(JFK, DEN, flight4);
+    AirportsGraph.addEdge(DEN, ATL, flight3);
+
+    // Display all vertices
+    std::cout << "Airports in the graph:\n";
+    for (const auto &vertex : AirportsGraph.getVertices())
+    {
+        std::cout << vertex << "\n";
+    }
+
+    std::cout << "\nEdges in the graph:\n";
+
+    // Display all edges
+    for (const auto &[src, dest, edge] : AirportsGraph.getAllEdges())
+    {
+        std::cout << src << " -> " << dest << " : " << edge << "\n";
+    }
+
+    // Check if specific edges exist
+    std::cout << "\nChecking specific edges:\n";
+    std::cout << "LAX to ATL: " << (AirportsGraph(LAX, ATL) ? "Exists" : "Does not exist") << "\n";
+    std::cout << "JFK to DEN: " << (AirportsGraph(JFK, DEN) ? "Exists" : "Does not exist") << "\n";
+    std::cout << "ATL to LAX: " << (AirportsGraph(ATL, LAX) ? "Exists" : "Does not exist") << "\n";
+
+    // Remove an edge 
+    std::cout << "\nRemoving edge JFK -> DEN...\n";
+    AirportsGraph.removeEdge(JFK, DEN);
+
+    std::cout << "\nUpdated edges in the graph:\n";
+    for (const auto &[src, dest, edge] : AirportsGraph.getAllEdges())
+    {
+        std::cout << src << " -> " << dest << " : " << edge << "\n";
+    }
+
+    return 0;
+}
+
+
+```
+## Example Diagram 2
+Code below implements the Graph relationship between Airports and Distances.
+
+## Undirected Weighted graph using Custom Structures/Classes
+```cpp
+#include <iostream>
+#include "../include/GraphMatrix.h"
+using namespace Appledore;
+
+class Airport : public GraphVertex
+{
+public:
+    std::string name;
+
+    Airport(std::string name) : name(name) {};
+
+    friend std::ostream &operator<<(std::ostream &os, const Airport &airport)
+    {
+        os << airport.name;
+        return os;
+    }
+};
+
+class Flight
+{
+public:
+    int distance;
+    Flight(int dis) : distance(dis) {};
+
+    friend std::ostream &operator<<(std::ostream &os, const Flight &flight)
+    {
+        os << flight.distance << " miles";
+        return os;
+    }
+};
+
+int main()
+{
+
+    GraphMatrix<Airport, Flight, UndirectedG> AirportGraph;
+    // Define airports
+    Airport LAX("Los Angeles Intl.");
+    Airport JFK("John F. Kennedy");
+    Airport DEN("Denver Intl.");
+    Airport ATL("Atlanta Intl.");
+
+    // Define flights
+    Flight flight1(862);
+    Flight flight2(1945);
+    Flight flight3(1199);
+    Flight flight4(1631);
+
+    // // Add vertices to the graph
+    AirportGraph.addVertex(LAX);
+    AirportGraph.addVertex(JFK, DEN, ATL);
+
+    // Add edges between airports
+    AirportGraph.addEdge(LAX, DEN, flight1);
+    AirportGraph.addEdge(LAX, ATL, flight2);
+    AirportGraph.addEdge(ATL, DEN, flight3);
+    AirportGraph.addEdge(DEN, JFK, flight4);
+
+    std::cout << "\nCheck if there is a flight from " << LAX << " --> " << DEN << ":\n";
+    if (AirportGraph(LAX, DEN))
+    {
+        const Flight edge = AirportGraph.getEdge(LAX, DEN);
+        std::cout << "Yes, flight distance: " << edge << "\n";
+    }
+    else
+    {
+        std::cout << "No direct flight available.\n";
+    }
+
+    std::cout << "\nCheck if there is a flight from " << ATL << " --> " << LAX << ":\n";
+    if (AirportGraph(ATL, LAX))
+    {
+        const Flight edge = AirportGraph.getEdge(ATL, LAX);
+        std::cout << "Yes, flight distance: " << edge << "\n";
+    }
+    else
+    {
+        std::cout << "No direct flight available.\n";
+    }
+
+    std::cout << "\nCheck if there is a flight from " << JFK << " --> " << LAX << ":\n";
+    if (AirportGraph(JFK, LAX))
+    {
+        const Flight edge = AirportGraph.getEdge(JFK, LAX);
+        std::cout << "Yes, flight distance: " << edge << "\n";
+    }
+    else
+    {
+        try
+        {
+            const Flight edge = AirportGraph.getEdge(JFK, LAX);
+            std::cout << "Yes, flight distance: " << edge << "\n";
+        }
+        catch (std::exception &e)
+        {
+            std::cout << "Error: " << e.what() << "\n";
+        }
+    }
+
+    AirportGraph.removeEdge(ATL, LAX);
+    if (!AirportGraph(ATL, LAX))
+    {
+        std::cout << "\nFlight Route from: " << ATL.name << " to " << LAX.name << " doesnt exist\n";
+    }
+    AirportGraph.iss();
+    return 0;
+}
+
+
+```
+
+
+## Example Diagram 3
 Code below implements this Graph relationship between USA States and transport medium.
 ![Screenshot_20241205_124620-1](https://github.com/user-attachments/assets/1db263c6-1538-4b14-8b33-725bb68ebc06)
-## Example using Custom Structures/Classes
+## MixedGraph Example using Custom Structures/Classes
 Below is an example of how to use the library with custom vertex and edge types.
 Find more examples [here](https://github.com/SharonIV0x86/Appledore/tree/main/examples)
 ```cpp
 #include <iostream>
 #include <string>
-#include "./include/MixedGraphMatrix.h"
+#include "./include/MixedGraph.h"
 
 // Vertex class representing a state in the USA
 class State
