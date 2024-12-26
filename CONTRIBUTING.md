@@ -6,16 +6,17 @@ Welcome to Appledore, a graph library designed to simplify graph representation 
 
 
 ## How to Contribute
-
-1. **Fork the repository** on GitHub.
-2. **Clone your fork**:  
+1. **Create a issue**: If you have a suggestion for an enhancement, a feature you'd like to see added, or a fix for an existing issue, please open an issue in our repository's issues section. [issues](https://github.com/SharonIV0x86/Appledore/issues/new) .
+2. **Issue assignment**: Wait till the issue is assigned to you, then you can work on the issue.
+3. **Fork the repository** on GitHub.
+4. **Clone your fork**:  
    ```bash
    git clone https://github.com/your-username/appledore.git
-3. **Create a branch** for your feature or bug fix
+5. **Create a branch** for your feature or bug fix
     ```bash
     git checkout -b feature/your-feature-name
-4. Write code and tests.
-5. Submit a **pull request** (PR) with a clear description of your changes
+6. Write code and tests.
+7. Submit a **pull request** (PR) with a clear description of your changes
 
 # Ideas for Contributions
 Here are some features and improvements you can work on.
