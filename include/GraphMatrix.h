@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <optional>
 #include <map>
+#include <set>
 
 namespace Appledore
 {
@@ -40,7 +41,6 @@ namespace Appledore
     {
         EdgeType value;
 
-        // EdgeInfo() : value() {}
         EdgeInfo(const EdgeType &value) : value(value) {}
     };
 
@@ -60,11 +60,6 @@ namespace Appledore
             {
                 if (vertexToIndex.count(vertex))
                     return;
-                // wont work.
-                //  if (!std::is_same_v<vertices, VertexType>)
-                //  {
-                //      throw std::invalid_argument("All arguments must be of type VertexType");
-                //  }
                 size_t newIndex = numVertices++;
                 vertexToIndex[vertex] = newIndex;
                 indexToVertex.push_back(vertex);
@@ -74,6 +69,7 @@ namespace Appledore
 
             adjacencyMatrix.resize(numVertices * numVertices, std::nullopt);
         }
+
         bool operator()(const VertexType src, const VertexType &dest)
         {
             if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
@@ -93,6 +89,7 @@ namespace Appledore
                 return false;
             }
         }
+
         // for weighted.
         void addEdge(const VertexType &src, const VertexType &dest, const EdgeType &edge)
         {
@@ -109,6 +106,7 @@ namespace Appledore
                 adjacencyMatrix[getIndex(destIndex, srcIndex)] = EdgeInfo<EdgeType>(edge);
             }
         }
+
         // for unweighted
         void addEdge(const VertexType &src, const VertexType &dest)
         {
@@ -137,13 +135,10 @@ namespace Appledore
             size_t srcIndex = vertexToIndex.at(src);
             size_t destIndex = vertexToIndex.at(dest);
 
-            std::cout << "Removing edge from src -> dest\n";
             adjacencyMatrix[getIndex(srcIndex, destIndex)] = std::nullopt;
 
-            std::cout << "Flag: " << std::boolalpha << isDirected << "\n";
             if (!isDirected)
             {
-                std::cout << "Removing edge from dest -> src\n";
                 adjacencyMatrix[getIndex(destIndex, srcIndex)] = std::nullopt;
             }
         }
@@ -165,6 +160,7 @@ namespace Appledore
         {
             return indexToVertex;
         }
+
         const EdgeType &getEdge(VertexType &src, VertexType &dest) const
         {
             if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
@@ -186,6 +182,7 @@ namespace Appledore
             }
         }
 
+        // Get all edges
         std::vector<std::tuple<VertexType, VertexType, EdgeType>> getAllEdges() const
         {
             std::vector<std::tuple<VertexType, VertexType, EdgeType>> edges;
@@ -205,6 +202,39 @@ namespace Appledore
                 }
             }
             return edges;
+        }
+
+        // Get neighbors for a vertex (using only a std::set for both weighted and unweighted graphs)
+        auto getNeighbors(const VertexType& vertex) const
+        {
+            if (!vertexToIndex.count(vertex))
+            {
+                throw std::invalid_argument("Vertex does not exist in the graph");
+            }
+
+            size_t vertexIndex = vertexToIndex.at(vertex);
+
+            // Using a set to store neighbors
+            std::set<VertexType> neighbors;
+
+            for (size_t destIndex = 0; destIndex < numVertices; ++destIndex)
+            {
+                if (adjacencyMatrix[getIndex(vertexIndex, destIndex)].has_value())
+                {
+                    neighbors.insert(indexToVertex[destIndex]);
+                }
+
+                // For undirected graphs, also check the reverse direction
+                if constexpr (std::is_same_v<Direction, UndirectedG>)
+                {
+                    if (adjacencyMatrix[getIndex(destIndex, vertexIndex)].has_value())
+                    {
+                        neighbors.insert(indexToVertex[destIndex]);
+                    }
+                }
+            }
+
+            return neighbors;
         }
 
     private:
