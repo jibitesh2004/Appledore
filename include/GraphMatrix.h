@@ -207,6 +207,20 @@ namespace Appledore
             return edges;
         }
 
+        // find all paths b/w two vertices
+        std::vector<std::vector<VertexType>> findAllPaths(const VertexType &src, const VertexType &dest)
+        {
+            if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
+                throw std::invalid_argument("One or both vertices do not exist");
+
+            std::vector<std::vector<VertexType>> allPaths; 
+            std::vector<VertexType> currentPath;    
+            std::map<VertexType, bool> visited;
+
+            dfs(src, dest, visited, currentPath, allPaths);
+            return allPaths;
+        }
+
     private:
         std::map<VertexType, size_t> vertexToIndex;
         std::vector<VertexType> indexToVertex;
@@ -217,6 +231,33 @@ namespace Appledore
         inline size_t getIndex(size_t src, size_t dest) const
         {
             return src * numVertices + dest;
+        }
+
+        // helper DFS function
+        void dfs(const VertexType &current, const VertexType &dest,
+                 std::map<VertexType, bool> &visited, std::vector<VertexType> &currentPath,
+                 std::vector<std::vector<VertexType>> &allPaths)
+        {
+            visited[current] = true;        
+            currentPath.push_back(current); 
+
+            if (current == dest) {
+                allPaths.push_back(currentPath); 
+            }
+            else {
+                size_t currentIndex = vertexToIndex[current];
+                for (size_t i = 0; i < numVertices; ++i) {
+                    if (adjacencyMatrix[getIndex(currentIndex, i)].has_value()) {
+                        VertexType nextVertex = indexToVertex[i];
+                        if (!visited[nextVertex]) {
+                            dfs(nextVertex, dest, visited, currentPath, allPaths);
+                        }
+                    }
+                }
+            }
+
+            currentPath.pop_back(); 
+            visited[current] = false;
         }
     };
 }
