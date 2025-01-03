@@ -101,7 +101,7 @@ namespace Appledore
 
             adjacencyMatrix[getIndex(srcIndex, destIndex)] = EdgeInfo<EdgeType>(edge);
 
-            if constexpr (std::is_same_v<Direction, UndirectedG>)
+            if (!isDirected)
             {
                 adjacencyMatrix[getIndex(destIndex, srcIndex)] = EdgeInfo<EdgeType>(edge);
             }
@@ -120,7 +120,7 @@ namespace Appledore
 
             adjacencyMatrix[getIndex(srcIndex, destIndex)] = EdgeInfo<EdgeType>();
 
-            if constexpr (std::is_same_v<Direction, UndirectedG>)
+            if (!isDirected)
             {
                 adjacencyMatrix[getIndex(destIndex, srcIndex)] = EdgeInfo<EdgeType>();
             }
@@ -165,16 +165,16 @@ namespace Appledore
         {
             if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
             {
-                throw std::invalid_argument("One of both vertices do not exist!");
+                throw std::invalid_argument("One or both vertices do not exist!");
             }
             size_t srcIndex = vertexToIndex.at(src);
             size_t destIndex = vertexToIndex.at(dest);
 
-            auto &egdeValue = adjacencyMatrix[getIndex(srcIndex, destIndex)];
+            auto &edgeValue = adjacencyMatrix[getIndex(srcIndex, destIndex)];
 
-            if (egdeValue.has_value())
+            if (edgeValue.has_value())
             {
-                return egdeValue.value().value;
+                return edgeValue.value().value;
             }
             else
             {
@@ -204,8 +204,8 @@ namespace Appledore
             return edges;
         }
 
-        // Get neighbors for a vertex (using only a std::set for both weighted and unweighted graphs)
-        auto getNeighbors(const VertexType& vertex) const
+        // Get neighbors for a vertex
+        std::set<VertexType> getNeighbors(const VertexType& vertex) const
         {
             if (!vertexToIndex.count(vertex))
             {
@@ -224,13 +224,10 @@ namespace Appledore
                     neighbors.insert(indexToVertex[destIndex]);
                 }
 
-                // For undirected graphs, also check the reverse direction
-                if constexpr (std::is_same_v<Direction, UndirectedG>)
+                // Check reverse direction only if the graph is undirected
+                if (!isDirected && adjacencyMatrix[getIndex(destIndex, vertexIndex)].has_value())
                 {
-                    if (adjacencyMatrix[getIndex(destIndex, vertexIndex)].has_value())
-                    {
-                        neighbors.insert(indexToVertex[destIndex]);
-                    }
+                    neighbors.insert(indexToVertex[destIndex]);
                 }
             }
 
@@ -244,6 +241,7 @@ namespace Appledore
         size_t numVertices = 0;
         bool isDirected;
         bool isWeighted;
+
         inline size_t getIndex(size_t src, size_t dest) const
         {
             return src * numVertices + dest;
