@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stack>
 #include "../include/GraphMatrix.h"
 
 using namespace Appledore;
@@ -8,7 +9,7 @@ class Airport : public GraphVertex
 public:
     std::string name;
 
-    Airport(std::string name) : name(name) {};
+    Airport(std::string name) : name(std::move(name)) {}
 
     friend std::ostream &operator<<(std::ostream &os, const Airport &airport)
     {
@@ -20,18 +21,14 @@ public:
     {
         return name == other.name;
     }
-
-    bool operator<(const Airport &other) const
-    {
-        return name < other.name;
-    }
 };
 
 class Flight
 {
 public:
     int distance;
-    Flight(int dis) : distance(dis) {};
+
+    Flight(int dis) : distance(dis) {}
 
     friend std::ostream &operator<<(std::ostream &os, const Flight &flight)
     {
@@ -64,10 +61,10 @@ int main()
     Flight flight9(2149);
     Flight flight10(2171);
 
-    // add vertices (airports)
+    // Add vertices (airports)
     AirportsGraph.addVertex(LAX, JFK, DEN, ATL, ORD, SFO, MIA, SEA);
 
-    // add edges (flights)
+    // Add edges (flights)
     AirportsGraph.addEdge(LAX, ATL, flight2);
     AirportsGraph.addEdge(LAX, JFK, flight5);
     AirportsGraph.addEdge(JFK, ATL, flight1);
@@ -79,7 +76,7 @@ int main()
     AirportsGraph.addEdge(ORD, MIA, flight9);
     AirportsGraph.addEdge(MIA, ATL, flight10);
 
-    // display vertices
+    // Display vertices
     std::cout << "Airports in the graph:\n";
     for (const auto &vertex : AirportsGraph.getVertices())
     {
@@ -88,13 +85,13 @@ int main()
 
     std::cout << "\nEdges in the graph:\n";
 
-    // display all edges
+    // Display all edges
     for (const auto &[src, dest, edge] : AirportsGraph.getAllEdges())
     {
         std::cout << src << " -> " << dest << " : " << edge << "\n";
     }
 
-    // example usage of findAllPaths
+    // Example usage of findAllPaths
     std::cout << "\nFinding all paths from LAX to ATL:\n";
     auto paths = AirportsGraph.findAllPaths(LAX, ATL);
     for (const auto &path : paths)
