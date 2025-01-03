@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <optional>
 #include <map>
-#include <stack>    
+#include <stack>
 #include <algorithm>
 
 namespace Appledore
