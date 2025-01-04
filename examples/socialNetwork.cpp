@@ -10,7 +10,7 @@ public:
     int sinceYear;
     std::string friendshipType;
 
-    Friendship(int sinceYear = 0, const std::string &friendshipType = "") 
+    Friendship(int sinceYear = 0, const std::string &friendshipType = "")
         : sinceYear(sinceYear), friendshipType(friendshipType) {}
 
     bool operator==(const Friendship &other) const
@@ -83,6 +83,7 @@ int main()
     {
         std::cout << "Error: " << e.what() << "\n";
     }
+    std::cout << "Total No. of friends Alice has:" << socialGraph.indegree( "Alice");
 
     return 0;
 }

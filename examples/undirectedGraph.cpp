@@ -121,5 +121,8 @@ int main()
         std::cout << "No direct flight available.\n";
     }
 
+    std::cout << "NO. of flights starting from " << LAX <<" : " << GraphAirports.outdegree(LAX) << "\n";
+    std::cout << "NO. of flights ending at " << LAX <<" : " << GraphAirports.indegree(LAX) << "\n";
+
     return 0;
 }

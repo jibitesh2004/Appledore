@@ -161,7 +161,7 @@ namespace Appledore
             return indexToVertex;
         }
 
-        const EdgeType &getEdge(VertexType &src, VertexType &dest) const
+        const EdgeType &getEdge(const VertexType &src, const VertexType &dest) const
         {
             if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
             {
@@ -210,6 +210,11 @@ namespace Appledore
             {
                 throw std::invalid_argument("Vertex does not exist in the graph");
             }
+            if (!isDirected)
+            {
+                std::cerr << "Indegree is not defined for undirected graphs\n";
+                return totalDegree(vertex);
+            }
             size_t vertexIndex = vertexToIndex.at(vertex);
             size_t indegree = 0;
             for (size_t srcIndex = 0; srcIndex < numVertices; ++srcIndex)
@@ -227,6 +232,11 @@ namespace Appledore
             if (!vertexToIndex.count(vertex))
             {
                 throw std::invalid_argument("Vertex does not exist in the graph");
+            }
+            if (!isDirected)
+            {
+                std::cerr << "Outdegree is not defined for undirected graphs\n";
+                return totalDegree(vertex);
             }
             size_t vertexIndex = vertexToIndex.at(vertex);
             size_t outdegree = 0;
