@@ -83,7 +83,7 @@ int main()
     {
         std::cout << "Error: " << e.what() << "\n";
     }
-    std::cout << "Total No. of friends Alice has:" << socialGraph.indegree( "Alice");
+    std::cout << "Total No. of friends Alice has:" << socialGraph.totalDegree( "Alice");
 
     return 0;
 }

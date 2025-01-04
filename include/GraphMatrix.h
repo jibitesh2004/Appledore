@@ -212,7 +212,7 @@ namespace Appledore
             }
             if (!isDirected)
             {
-                std::cerr << "Indegree is not defined for undirected graphs. Returning Total Degree\n";
+                std::cerr << "\nIndegree is not defined for undirected graphs. Returning Total Degree\n";
                 return totalDegree(vertex);
             }
             size_t vertexIndex = vertexToIndex.at(vertex);
@@ -235,7 +235,7 @@ namespace Appledore
             }
             if (!isDirected)
             {
-                std::cerr << "Outdegree is not defined for undirected graphs. Returning total degree\n";
+                std::cerr << "\nOutdegree is not defined for undirected graphs. Returning total degree\n";
                 return totalDegree(vertex);
             }
             size_t vertexIndex = vertexToIndex.at(vertex);
