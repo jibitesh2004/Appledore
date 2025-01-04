@@ -212,7 +212,7 @@ namespace Appledore
             }
             if (!isDirected)
             {
-                std::cerr << "Indegree is not defined for undirected graphs\n";
+                std::cerr << "Indegree is not defined for undirected graphs. Returning Total Degree\n";
                 return totalDegree(vertex);
             }
             size_t vertexIndex = vertexToIndex.at(vertex);
@@ -235,7 +235,7 @@ namespace Appledore
             }
             if (!isDirected)
             {
-                std::cerr << "Outdegree is not defined for undirected graphs.\n";
+                std::cerr << "Outdegree is not defined for undirected graphs. Returning total degree\n";
                 return totalDegree(vertex);
             }
             size_t vertexIndex = vertexToIndex.at(vertex);
@@ -258,7 +258,16 @@ namespace Appledore
             }
             if (isDirected)
                 return indegree(vertex) + outdegree(vertex);
-            return 2*outdegree(vertex);
+            size_t vertexIndex = vertexToIndex.at(vertex);
+            size_t totaldegree = 0;
+            for (size_t srcIndex = 0; srcIndex < numVertices; ++srcIndex)
+            {
+                if (adjacencyMatrix[getIndex(srcIndex, vertexIndex)].has_value())
+                {
+                    totaldegree++;
+                }
+            }
+            return totaldegree;
         }
         // Get neighbors for a vertex
         std::set<VertexType> getNeighbors(const VertexType& vertex) const
