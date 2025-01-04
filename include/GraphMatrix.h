@@ -161,7 +161,7 @@ namespace Appledore
             return indexToVertex;
         }
 
-        const EdgeType &getEdge(VertexType &src, VertexType &dest) const
+        const EdgeType &getEdge(const VertexType &src, const VertexType &dest) const
         {
             if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
             {
