@@ -50,8 +50,8 @@ namespace Appledore
     {
     public:
         GraphMatrix()
-            : isWeighted(!std::is_same_v<EdgeType, UnweightedG>),
-              isDirected(std::is_same_v<Direction, DirectedG>) {}
+            : isDirected(std::is_same_v<Direction, DirectedG>),
+              isWeighted(!std::is_same_v<EdgeType, UnweightedG>) {}
 
         template <typename... Vertices>
         void addVertex(Vertices &&...vertices)
@@ -203,7 +203,53 @@ namespace Appledore
             }
             return edges;
         }
-
+        // Get indegree for a vertex
+        [[nodiscard]] size_t indegree(const VertexType& vertex) const
+        {
+            if (!vertexToIndex.count(vertex))
+            {
+                throw std::invalid_argument("Vertex does not exist in the graph");
+            }
+            size_t vertexIndex = vertexToIndex.at(vertex);
+            size_t indegree = 0;
+            for (size_t srcIndex = 0; srcIndex < numVertices; ++srcIndex)
+            {
+                if (adjacencyMatrix[getIndex(srcIndex, vertexIndex)].has_value())
+                {
+                    indegree++;
+                }
+            }
+            return indegree;
+        }
+        // Get outdegree for a vertex
+        [[nodiscard]] size_t outdegree(const VertexType& vertex) const
+        {
+            if (!vertexToIndex.count(vertex))
+            {
+                throw std::invalid_argument("Vertex does not exist in the graph");
+            }
+            size_t vertexIndex = vertexToIndex.at(vertex);
+            size_t outdegree = 0;
+            for (size_t destIndex = 0; destIndex < numVertices; ++destIndex)
+            {
+                if (adjacencyMatrix[getIndex(vertexIndex, destIndex)].has_value())
+                {
+                    outdegree++;
+                }
+            }
+            return outdegree;
+        }
+        // Get totalDegree for a vertex
+        [[nodiscard]] size_t totalDegree(const VertexType& vertex) const
+        {
+            if (!vertexToIndex.count(vertex))
+            {
+                throw std::invalid_argument("Vertex does not exist in the graph");
+            }
+            if (isDirected)
+                return indegree(vertex) + outdegree(vertex);
+            return 2*outdegree(vertex);
+        }
         // Get neighbors for a vertex
         std::set<VertexType> getNeighbors(const VertexType& vertex) const
         {
