@@ -7,6 +7,7 @@
 #include <map>
 #include <stack>
 #include <algorithm>
+#include <set>
 
 namespace Appledore
 {
@@ -42,7 +43,6 @@ namespace Appledore
     {
         EdgeType value;
 
-        // EdgeInfo() : value() {}
         EdgeInfo(const EdgeType &value) : value(value) {}
     };
 
@@ -52,8 +52,8 @@ namespace Appledore
     {
     public:
         GraphMatrix()
-            : isWeighted(!std::is_same_v<EdgeType, UnweightedG>),
-              isDirected(std::is_same_v<Direction, DirectedG>) {}
+            : isDirected(std::is_same_v<Direction, DirectedG>),
+              isWeighted(!std::is_same_v<EdgeType, UnweightedG>) {}
 
         template <typename... Vertices>
         void addVertex(Vertices &&...vertices)
@@ -62,11 +62,6 @@ namespace Appledore
             {
                 if (vertexToIndex.count(vertex))
                     return;
-                // wont work.
-                //  if (!std::is_same_v<vertices, VertexType>)
-                //  {
-                //      throw std::invalid_argument("All arguments must be of type VertexType");
-                //  }
                 size_t newIndex = numVertices++;
                 vertexToIndex[vertex] = newIndex;
                 indexToVertex.push_back(vertex);
@@ -76,6 +71,7 @@ namespace Appledore
 
             adjacencyMatrix.resize(numVertices * numVertices, std::nullopt);
         }
+
         bool operator()(const VertexType src, const VertexType &dest)
         {
             if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
@@ -95,6 +91,7 @@ namespace Appledore
                 return false;
             }
         }
+
         // for weighted.
         void addEdge(const VertexType &src, const VertexType &dest, const EdgeType &edge)
         {
@@ -106,11 +103,12 @@ namespace Appledore
 
             adjacencyMatrix[getIndex(srcIndex, destIndex)] = EdgeInfo<EdgeType>(edge);
 
-            if constexpr (std::is_same_v<Direction, UndirectedG>)
+            if (!isDirected)
             {
                 adjacencyMatrix[getIndex(destIndex, srcIndex)] = EdgeInfo<EdgeType>(edge);
             }
         }
+
         // for unweighted
         void addEdge(const VertexType &src, const VertexType &dest)
         {
@@ -124,7 +122,7 @@ namespace Appledore
 
             adjacencyMatrix[getIndex(srcIndex, destIndex)] = EdgeInfo<EdgeType>();
 
-            if constexpr (std::is_same_v<Direction, UndirectedG>)
+            if (!isDirected)
             {
                 adjacencyMatrix[getIndex(destIndex, srcIndex)] = EdgeInfo<EdgeType>();
             }
@@ -139,13 +137,10 @@ namespace Appledore
             size_t srcIndex = vertexToIndex.at(src);
             size_t destIndex = vertexToIndex.at(dest);
 
-            std::cout << "Removing edge from src -> dest\n";
             adjacencyMatrix[getIndex(srcIndex, destIndex)] = std::nullopt;
 
-            std::cout << "Flag: " << std::boolalpha << isDirected << "\n";
             if (!isDirected)
             {
-                std::cout << "Removing edge from dest -> src\n";
                 adjacencyMatrix[getIndex(destIndex, srcIndex)] = std::nullopt;
             }
         }
@@ -167,20 +162,21 @@ namespace Appledore
         {
             return indexToVertex;
         }
-        const EdgeType &getEdge(VertexType &src, VertexType &dest) const
+
+        const EdgeType &getEdge(const VertexType &src, const VertexType &dest) const
         {
             if (!vertexToIndex.count(src) || !vertexToIndex.count(dest))
             {
-                throw std::invalid_argument("One of both vertices do not exist!");
+                throw std::invalid_argument("One or both vertices do not exist!");
             }
             size_t srcIndex = vertexToIndex.at(src);
             size_t destIndex = vertexToIndex.at(dest);
 
-            auto &egdeValue = adjacencyMatrix[getIndex(srcIndex, destIndex)];
+            auto &edgeValue = adjacencyMatrix[getIndex(srcIndex, destIndex)];
 
-            if (egdeValue.has_value())
+            if (edgeValue.has_value())
             {
-                return egdeValue.value().value;
+                return edgeValue.value().value;
             }
             else
             {
@@ -188,6 +184,7 @@ namespace Appledore
             }
         }
 
+        // Get all edges
         std::vector<std::tuple<VertexType, VertexType, EdgeType>> getAllEdges() const
         {
             std::vector<std::tuple<VertexType, VertexType, EdgeType>> edges;
@@ -207,6 +204,101 @@ namespace Appledore
                 }
             }
             return edges;
+        }
+        // Get indegree for a vertex
+        [[nodiscard]] size_t indegree(const VertexType& vertex) const
+        {
+            if (!vertexToIndex.count(vertex))
+            {
+                throw std::invalid_argument("Vertex does not exist in the graph");
+            }
+            if (!isDirected)
+            {
+                std::cerr << "\nIndegree is not defined for undirected graphs. Returning Total Degree\n";
+                return totalDegree(vertex);
+            }
+            size_t vertexIndex = vertexToIndex.at(vertex);
+            size_t indegree = 0;
+            for (size_t srcIndex = 0; srcIndex < numVertices; ++srcIndex)
+            {
+                if (adjacencyMatrix[getIndex(srcIndex, vertexIndex)].has_value())
+                {
+                    indegree++;
+                }
+            }
+            return indegree;
+        }
+        // Get outdegree for a vertex
+        [[nodiscard]] size_t outdegree(const VertexType& vertex) const
+        {
+            if (!vertexToIndex.count(vertex))
+            {
+                throw std::invalid_argument("Vertex does not exist in the graph");
+            }
+            if (!isDirected)
+            {
+                std::cerr << "\nOutdegree is not defined for undirected graphs. Returning total degree\n";
+                return totalDegree(vertex);
+            }
+            size_t vertexIndex = vertexToIndex.at(vertex);
+            size_t outdegree = 0;
+            for (size_t destIndex = 0; destIndex < numVertices; ++destIndex)
+            {
+                if (adjacencyMatrix[getIndex(vertexIndex, destIndex)].has_value())
+                {
+                    outdegree++;
+                }
+            }
+            return outdegree;
+        }
+        // Get totalDegree for a vertex
+        [[nodiscard]] size_t totalDegree(const VertexType& vertex) const
+        {
+            if (!vertexToIndex.count(vertex))
+            {
+                throw std::invalid_argument("Vertex does not exist in the graph");
+            }
+            if (isDirected)
+                return indegree(vertex) + outdegree(vertex);
+            size_t vertexIndex = vertexToIndex.at(vertex);
+            size_t totaldegree = 0;
+            for (size_t srcIndex = 0; srcIndex < numVertices; ++srcIndex)
+            {
+                if (adjacencyMatrix[getIndex(srcIndex, vertexIndex)].has_value())
+                {
+                    totaldegree++;
+                }
+            }
+            return totaldegree;
+        }
+        // Get neighbors for a vertex
+        std::set<VertexType> getNeighbors(const VertexType& vertex) const
+        {
+            if (!vertexToIndex.count(vertex))
+            {
+                throw std::invalid_argument("Vertex does not exist in the graph");
+            }
+
+            size_t vertexIndex = vertexToIndex.at(vertex);
+
+            // Using a set to store neighbors
+            std::set<VertexType> neighbors;
+
+            for (size_t destIndex = 0; destIndex < numVertices; ++destIndex)
+            {
+                if (adjacencyMatrix[getIndex(vertexIndex, destIndex)].has_value())
+                {
+                    neighbors.insert(indexToVertex[destIndex]);
+                }
+
+                // Check reverse direction only if the graph is undirected
+                if (!isDirected && adjacencyMatrix[getIndex(destIndex, vertexIndex)].has_value())
+                {
+                    neighbors.insert(indexToVertex[destIndex]);
+                }
+            }
+
+            return neighbors;
         }
 
         // find all paths b/w two vertices
@@ -261,6 +353,7 @@ namespace Appledore
         size_t numVertices = 0;
         bool isDirected;
         bool isWeighted;
+
         inline size_t getIndex(size_t src, size_t dest) const
         {
             return src * numVertices + dest;

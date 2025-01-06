@@ -87,6 +87,9 @@ int main()
     {
         std::cout << src << " -> " << dest << " : " << edge << "\n";
     }
+    std::cout << "NO. of flights starting from " << LAX <<" : " << AirportsGraph.outdegree(LAX) << "\n";
+    std::cout << "NO. of flights ending at " << LAX <<" : " << AirportsGraph.indegree(LAX) << "\n";
+    std::cout << "Total flights to and from " << LAX <<" : " << AirportsGraph.totalDegree(LAX) << "\n";
 
     return 0;
 }
